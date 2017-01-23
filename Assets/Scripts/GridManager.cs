@@ -31,14 +31,35 @@ public class GridManager : MonoBehaviour
 
     private bool m_gameRunning = false;
 
+    private int m_itemsLoaded;
+    private int m_secsLeft;
+    private int m_secsPassed = 0;
+
 	/// <summary>
     /// Script entry point
     /// </summary>
 	private void Start () 
 	{
         m_uih = GameObject.FindObjectOfType<UIHandler>();
+        StartCoroutine(CalculateLoadTime());
         StartCoroutine(GenerateGrid(0));
 	}
+
+    private IEnumerator CalculateLoadTime()
+    {
+
+        if (m_itemsLoaded > 0)
+        {
+            m_secsPassed++;
+            int total = m_gridSize * m_gridSize;
+            int left = total - m_itemsLoaded;
+            m_secsLeft = left / (m_itemsLoaded / m_secsPassed);
+          
+        }
+        yield return new WaitForSeconds(1);
+        if (m_gameReady == false) StartCoroutine(CalculateLoadTime());
+        
+    }
 
     private IEnumerator GenerateGrid(int progress)
     {
@@ -62,7 +83,9 @@ public class GridManager : MonoBehaviour
             m_cellList.Add(new CellObject(pos, m_cellPrefab, m_cellSprites).GetGridNode);
             tprog++;
             progress++;
-            m_uih.UpdateLoadingStatus(progress, m_gridSize * m_gridSize);
+           
+            m_itemsLoaded++;
+            m_uih.UpdateLoadingStatus(progress, m_gridSize * m_gridSize, m_secsLeft);
         }
         yield return new WaitForSeconds(0.005f);
 
