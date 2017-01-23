@@ -1,7 +1,11 @@
+
 # The Game of Life
 
 A Unity 'game' based on Conway's Game of Life, following [the defined rules](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life). 
 
+----------
+# Live demo!
+Check [my portfolio](http://jarisenhorst.com/?p=pentry&id=31) for a live demo.
 
 ----------
 #General information
