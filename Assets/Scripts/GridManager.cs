@@ -1,4 +1,14 @@
-﻿using UnityEngine;
+﻿/*
+ * Copyright (c) Jari Senhorst. All rights reserved.  
+ * 
+ * Licensed under the MIT License. See LICENSE file in the project root for full license information.  
+ * 
+ * 
+ * This class is the essential heart of the game. It handles the grid and input made to it. The game simulation is also handled here.
+ * 
+ */
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -6,34 +16,30 @@ using System;
 public class GridManager : MonoBehaviour
 {
     [SerializeField]
-    private int m_gridSize;
+    private int m_gridSize; //The squared size of the grid
 
     [SerializeField]
-    private GameObject m_cellPrefab;
+    private GameObject m_cellPrefab; //The prefab for cells
 
     [SerializeField]
-    private Sprite[] m_cellSprites;
+    private Sprite[] m_cellSprites; //An array of the dead and alive cell sprites (0 dead, 1 alive)
 
     [SerializeField]
-    private float m_simDelay;
+    private float m_simDelay; //The delay in seconds between each simulation iteration
 
     [SerializeField]
-    private float m_zoomSpeed;
+    private float m_zoomSpeed; //The zoom speed for the camera
 
     [SerializeField]
-    private float m_camSpeed;
+    private float m_camSpeed; //The movement speed for the camera
 
-    private UIHandler m_uih;
-
-    private bool m_gameReady = false;
-
-    private List<GridNode> m_cellList = new List<GridNode>();
-
-    private bool m_gameRunning = false;
-
-    private int m_itemsLoaded;
-    private int m_secsLeft;
-    private int m_secsPassed = 0;
+    private UIHandler m_uih; //UI handler instance
+    private bool m_gameReady = false; //Bool for if the game is ready to go
+    private List<GridNode> m_cellList = new List<GridNode>(); //A list of all the grid nodes
+    private bool m_gameRunning = false; //Bool for whether the simulation is running or not
+    private int m_itemsLoaded; //Int for keeping track of how many grid cells have been loaded during first generation
+    private int m_secsLeft; //Int for the amount of seconds left before the generator is finished
+    private int m_secsPassed = 0; //Int for the amount of seconds passed since grid generation started
 
 	/// <summary>
     /// Script entry point
@@ -45,6 +51,9 @@ public class GridManager : MonoBehaviour
         StartCoroutine(GenerateGrid(0));
 	}
 
+    /// <summary>
+    /// A separate routine for calculating the time needed to complete grid generation
+    /// </summary>
     private IEnumerator CalculateLoadTime()
     {
 
@@ -61,6 +70,10 @@ public class GridManager : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// The grid generator in a separate routine
+    /// </summary>
+    /// <param name="progress">The progress from which to start the generating process</param>
     private IEnumerator GenerateGrid(int progress)
     {
         int tprog = 0;
@@ -93,11 +106,14 @@ public class GridManager : MonoBehaviour
         else
         {
             CenterCamera();
-            CalculateNeighbors();
+            ResolveNeighbors();
         }
     }
 
-    private void CalculateNeighbors()
+    /// <summary>
+    /// Resolves the neighboring cells for each individual cell
+    /// </summary>
+    private void ResolveNeighbors()
     {
 
         for (int x = 0; x < m_gridSize; x++)
@@ -200,6 +216,9 @@ public class GridManager : MonoBehaviour
         m_uih.OnGamePause();
     }
 
+    /// <summary>
+    /// Centers the camera on the grid
+    /// </summary>
     private void CenterCamera()
     {
         int centeridx = Mathf.RoundToInt((m_gridSize * m_gridSize) / 2);
@@ -258,6 +277,9 @@ public class GridManager : MonoBehaviour
         }
 	}
 
+    /// <summary>
+    /// A separate routine that executes the simulation iterations
+    /// </summary>
     private IEnumerator RunSimulation()
     {
         List<GridNode> nodesToKill = new List<GridNode>();
