@@ -92,7 +92,7 @@ public class GridManager : MonoBehaviour
             {
                 pos = new Vector2(progress * 0.01f, 0f);
             }
-
+           
             m_cellList.Add(new CellObject(pos, m_cellPrefab, m_cellSprites).GetGridNode);
             tprog++;
             progress++;
@@ -222,7 +222,7 @@ public class GridManager : MonoBehaviour
     private void CenterCamera()
     {
         int centeridx = Mathf.RoundToInt((m_gridSize * m_gridSize) / 2);
-  
+        Camera.main.orthographicSize = 0.08f;
         Vector2 p = m_cellList[m_gridSize/2].ObjectInstance.transform.position;
         Camera.main.transform.position = new Vector3(p.x, p.y + ((0.01f * m_gridSize) / 2), -10);
     }
